@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Theo Presentation</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/blood.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+
+    <!-- custom css -->
+    <link rel="stylesheet" href="css/theo.css">
+
+</head>
+<body>
+<div class="reveal">
+    <section class="slides">
+        <!-- slide 0 -->
+        <section>
+            <h2>Theo</h2>
+            <h4>The Authorized_Keys Manager</h4>
+            <a href="https://github.com/theoapp" target="_blank">@TheoApp</a>
+            <hr/>
+            Michele Azzolari<br/>
+            <a href="https://github.com/macno" target="_blank">@macno</a>
+        </section>
+
+        <!-- slide 1 -->
+        <section>
+            <h4>GET /api/v1/users/me</h4>
+            <pre class="fragment green" data-fragment-index="1">{
+    "fullname": "Michele Azzolari",
+    "description": "Dad, Full Stack Developer, Avid music listener",
+    "nickname": "macno",
+    "created_at": "19770411T190000+0200",
+    "current_job": "CTO and co-founder Fluidware srl",
+    "city": "Milan, Italy"
+}</pre>
+        </section>
+
+        <!-- slide 2 -->
+        <section>
+            <h2>GLOSSARY</h2>
+            <dl class="dl-horizontal">
+                <dt>host</dt>
+                <dd>it's the computer you want to connect to via SSH (where sshd is running)</dd>
+                <dt>user</dt>
+                <dd>it's the login name (OS User) you want to connect to via SSH</dd>
+                <dt>account</dt>
+                <dd>Who connects, physical person or virtual account (who owns the private key)</dd>
+            </dl>
+
+        </section>
+
+        <!-- slide 3 -->
+        <section>
+            <section>
+                <h2>WHY THEO?</h2>
+                <ul>
+                    <li class="fragment " data-fragment-index="1">I use few laptops</li>
+                    <li class="fragment " data-fragment-index="2">I manage several servers</li>
+                    <li class="fragment " data-fragment-index="3">I work with different teams</li>
+                </ul>
+            </section>
+            <section>
+                <h3>And what happens when..</h3>
+                <ul>
+                    <li class="fragment " data-fragment-index="1">A new laptop/desktop has to be activated</li>
+                    <li class="fragment " data-fragment-index="2">An old laptop/desktop has to be dismissed</li>
+                    <li class="fragment " data-fragment-index="3">A new server has to be installed</li>
+                    <li class="fragment " data-fragment-index="4">A new member joins the team</li>
+                    <li class="fragment " data-fragment-index="5">A current member leaves the team</li>
+                </ul>
+                <p class="fragment " data-fragment-index="6">?</p>
+            </section>
+            <section>
+                <h3>You need to update <span class="green">authorized_keys</span> EVERYWHERE!</h3>
+                <p class="fragment" data-fragment-index="1">Of course if you use them</p>
+                <p class="red fragment" data-fragment-index="2">And if you don't.. you should!</p>
+            </section>
+            <section>
+                <h3>I hate doing this stuff</h3>
+            </section>
+            <section>
+                <h5>Error prone</h5>
+                <ul>
+                    <li>Files are scattered in several places (a full matrix of hosts/users)</li>
+                </ul>
+            </section>
+            <section>
+                <h5>Critical but monkey work</h5>
+                <ul>
+                    <li>I do the same thing over and over</li>
+                    <li>If I forget to add a key, someone will complain she can't do her job</li>
+                    <li>If I forget to remove a key, someone will have access to hosts while she shouldn't</li>
+                </ul>
+            </section>
+            <section>
+                <h5>You miss the full picture</h5>
+                <ul>
+                    <li>Do I forget something? There's no way to verify but checking everything</li>
+                    <li>Who has access to what?</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- slide 4 -->
+        <section>
+            <section>
+                <h2>SO?</h2>
+                <h4 class="fragment green" data-fragment-index="1">I definitively want to have a single place to manage
+                    everything!</h4>
+            </section>
+
+            <section>
+                <p>
+                    Since openssh 6.2 (2013-03-22) a new option is available: <em>AuthorizedKeysCommand</em>
+                </p>
+                <p class="fragment" data-fragment-index="1">
+                    it supports <em>fetching authorized_keys from a command in addition to (or
+                    instead of) from the filesystem.</em>
+                    <br/>
+                    <small><a href="https://www.openssh.com/txt/release-6.2" target="_blank">https://www.openssh.com/txt/release-6.2</a>
+                    </small>
+                </p>
+
+            </section>
+
+            <section>
+                <h2 class="green">EUREKA!</h2>
+
+                <p class="fragment">
+                    <small>Thanks <a href="https://github.com/johnnyrun" target="_blank">@johnnyrun</a> to point me to
+                        it!
+                    </small>
+                </p>
+            </section>
+        </section>
+
+        <!-- slide 5 -->
+        <section>
+            <section>
+                <h3>The idea</h3>
+                <p>Store <em>accounts/public keys/permissons</em> in a single place and provide them via HTTPS to the
+                    hosts</p>
+            </section>
+            <section>
+                <img src="assets/laptop.png" class="laptop"/><br/>
+                Account connects to host:
+                <pre>ssh a.user@server1</pre>
+            </section>
+            <section>
+                <img src="assets/server.svg" class="server"/><br/>
+                Host fetches authorized_keys from external server passing its hostname and the user :
+                <pre>GET /authorized_keys/server1/a.user</pre>
+            </section>
+            <section>
+                <img src="assets/server.svg" class="server"/><br/>
+                Server looks up for authorized_keys enabled for host <em>server1</em> and user <em>a.user</em>:<br/>
+            </section>
+            <section>
+                <img src="assets/server.svg" class="server"/><br/>
+                If it finds anything, it returns them to the host:<br/>
+                <pre>
+sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD[....]GQWv5CcHIe1kQljCzz macno@helsinki.local
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ[....]rhAdoKKhbGfAdUw0xv macno@gruff
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
+                </pre>
+            </section>
+        </section>
+
+        <!-- slide 6 -->
+        <section>
+            <section>
+                <h3>Theo</h3>
+                <p>Based on 3 components</p>
+                <ul>
+                    <li class="fragment">Theo server</li>
+                    <li class="fragment">Theo agent</li>
+                    <li class="fragment">Theo CLI</li>
+                </ul>
+            </section>
+            <!-- slide 6.1 -->
+            <section>
+                <h3>Theo Server</h3>
+                <ul>
+                    <li class="fragment" data-fragment-index="1">Written in node.js</li>
+                    <li class="fragment" data-fragment-index="2">Uses sqlite3 to store data (more DBs to come)</li>
+                    <li class="fragment" data-fragment-index="3">Supports memcached and redis to cache authorized_keys
+                        per host/user
+                    </li>
+                </ul>
+            </section>
+            <section>
+                <h3>Theo Server</h3>
+                Expose REST APIs for administration
+                <ul>
+                    <li class="fragment" data-fragment-index="4">Accounts</li>
+                    <li class="fragment" data-fragment-index="5">Groups</li>
+                    <li class="fragment" data-fragment-index="6">Authorized_keys</li>
+                    <li class="fragment" data-fragment-index="7">Permissions</li>
+                </ul>
+                <p class="fragment green" data-fragment-index="8">Used by theo CLI</p>
+            </section>
+            <section>
+                <h3>Theo Server</h3>
+                Expose one simple endpoint to fetch authorized_keys
+                <p class="fragment green" data-fragment-index="9">Used by theo agent</p>
+            </section>
+
+            <!-- slide 8 -->
+            <section>
+                <h3>Theo Agent</h3>
+                <ul>
+                    <li class="fragment">Written in go</li>
+                    <li class="fragment">Keep a local copy of authorized_keys per user to be used if theo-server is
+                        unreachable
+                    </li>
+                    <li class="fragment">self-install feature</li>
+                </ul>
+            </section>
+            <section>
+                We wrote an agent, but its function can be replaced with a bash script that curls theo-server
+            </section>
+
+            <!-- slide 9 -->
+
+            <section>
+                <h3>Theo CLI</h3>
+                <ul>
+                    <li class="fragment">Written in node.js</li>
+                    <li class="fragment">Available as npm package <a
+                            href="https://www.npmjs.com/package/theoapp-cli"
+                            target="_blank">theoapp-cli</a></li>
+                </ul>
+            </section>
+
+        </section>
+
+
+</div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+    // More info https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        history: true,
+
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+            {src: 'plugin/markdown/marked.js'},
+            {src: 'plugin/markdown/markdown.js'},
+            {src: 'plugin/notes/notes.js', async: true},
+            {
+                src: 'plugin/highlight/highlight.js', async: true, callback: function () {
+                    hljs.initHighlightingOnLoad();
+                }
+            }
+        ]
+    });
+</script>
+</body>
+</html>

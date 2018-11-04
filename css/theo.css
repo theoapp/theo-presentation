@@ -1,0 +1,36 @@
+@media (min-width: 768px) {
+    .dl-horizontal dl {
+        margin: 0;
+    }
+
+    .dl-horizontal dt {
+        float: left;
+        width: 180px;
+        overflow: hidden;
+        clear: left;
+        text-align: right;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .dl-horizontal dd {
+        margin-left: 200px;
+    }
+
+}
+
+.green {
+    color: #17ff2e !important;
+}
+
+.red {
+    color: #ff2c2d !important;
+}
+
+img.server {
+    height: 100px;
+}
+
+img.laptop {
+    height: 100px;
+}
