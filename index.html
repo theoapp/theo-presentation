@@ -195,9 +195,10 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
             <section>
                 <h3>Theo Server</h3>
                 <ul>
-                    <li class="fragment" data-fragment-index="1">Written in node.js</li>
-                    <li class="fragment" data-fragment-index="2">Uses sqlite3 to store data (more DBs to come)</li>
-                    <li class="fragment" data-fragment-index="3">Supports memcached and redis to cache authorized_keys
+                    <li class="fragment">Written in node.js</li>
+                    <li class="fragment">Uses sqlite3 to store data (more DBs to come)</li>
+                    <li class="fragment">Available as docker image <a href="https://hub.docker.com/r/theoapp/theo/" target="_blank">theoapp/theo</a></li>
+                    <li class="fragment">Supports memcached and redis to cache authorized_keys
                         per host/user
                     </li>
                 </ul>
@@ -206,17 +207,17 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
                 <h3>Theo Server</h3>
                 Exposes a REST APIs for administration
                 <ul>
-                    <li class="fragment" data-fragment-index="4">Accounts</li>
-                    <li class="fragment" data-fragment-index="5">Groups</li>
-                    <li class="fragment" data-fragment-index="6">Authorized_keys</li>
-                    <li class="fragment" data-fragment-index="7">Permissions</li>
+                    <li class="fragment">Accounts</li>
+                    <li class="fragment">Groups</li>
+                    <li class="fragment">Authorized_keys</li>
+                    <li class="fragment">Permissions</li>
                 </ul>
-                <p class="fragment green" data-fragment-index="8">Consumed by theo CLI</p>
+                <p class="fragment green">Consumed by theo CLI</p>
             </section>
             <section>
                 <h3>Theo Server</h3>
                 Exposes an endpoint to fetch authorized_keys
-                <p class="fragment green" data-fragment-index="9">Consumed by theo agent</p>
+                <p class="fragment green">Consumed by theo agent</p>
             </section>
 
             <!-- slide 8 -->
