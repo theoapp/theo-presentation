@@ -34,3 +34,7 @@ img.server {
 img.laptop {
     height: 100px;
 }
+
+.smaller {
+    font-size: 70% !important;
+}

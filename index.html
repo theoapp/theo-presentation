@@ -26,7 +26,7 @@
 
 </head>
 <body>
-<div class="reveal">
+<section class="reveal">
     <section class="slides">
         <!-- slide 0 -->
         <section>
@@ -41,14 +41,14 @@
         <!-- slide 1 -->
         <section>
             <h4>GET /api/v1/users/me</h4>
-            <pre class="fragment green" data-fragment-index="1">{
+            <pre class="fragment" data-fragment-index="1"><code class="hljs json">{
     "fullname": "Michele Azzolari",
     "description": "Dad, Full Stack Developer, Avid music listener",
     "nickname": "macno",
     "created_at": "19770411T190000+0200",
     "current_job": "CTO and co-founder Fluidware srl",
     "city": "Milan, Italy"
-}</pre>
+}</code></pre>
         </section>
 
         <!-- slide 2 -->
@@ -143,7 +143,9 @@
                 <h2 class="green">EUREKA!</h2>
 
                 <p class="fragment">
-                    <small>Thanks <a href="https://github.com/johnnyrun" target="_blank">@johnnyrun</a> for heading me there</small>
+                    <small>Thanks <a href="https://github.com/johnnyrun" target="_blank">@johnnyrun</a> for heading me
+                        there
+                    </small>
                 </p>
             </section>
         </section>
@@ -172,11 +174,10 @@
             <section>
                 <img src="assets/server.svg" class="server"/><br/>
                 If it finds anything, it returns them to the host:<br/>
-                <pre>
+                <pre><code>
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD[....]GQWv5CcHIe1kQljCzz macno@helsinki.local
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ[....]rhAdoKKhbGfAdUw0xv macno@gruff
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
-                </pre>
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero</code></pre>
             </section>
         </section>
 
@@ -197,12 +198,14 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
                 <ul>
                     <li class="fragment">Written in node.js</li>
                     <li class="fragment">Uses sqlite3 to store data (more DBs to come)</li>
-                    <li class="fragment">Available as docker image <a href="https://hub.docker.com/r/theoapp/theo/" target="_blank">theoapp/theo</a></li>
+                    <li class="fragment">Available as docker image <a href="https://hub.docker.com/r/theoapp/theo/"
+                                                                      target="_blank">theoapp/theo</a></li>
                     <li class="fragment">Supports memcached and redis to cache authorized_keys
                         per host/user
                     </li>
                 </ul>
             </section>
+            <!-- slide 6.2 -->
             <section>
                 <h3>Theo Server</h3>
                 Exposes a REST APIs for administration
@@ -214,13 +217,14 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
                 </ul>
                 <p class="fragment green">Consumed by theo CLI</p>
             </section>
+            <!-- slide 6.3 -->
             <section>
                 <h3>Theo Server</h3>
                 Exposes an endpoint to fetch authorized_keys
                 <p class="fragment green">Consumed by theo agent</p>
             </section>
 
-            <!-- slide 8 -->
+            <!-- slide 6.4 -->
             <section>
                 <h3>Theo Agent</h3>
                 <ul>
@@ -231,11 +235,12 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
                     <li class="fragment">Self-install feature</li>
                 </ul>
             </section>
+            <!-- slide 6.5 -->
             <section>
                 We wrote an agent, but it can be replaced by a shell script that curls theo-server
             </section>
 
-            <!-- slide 9 -->
+            <!-- slide 6.6 -->
 
             <section>
                 <h3>Theo CLI</h3>
@@ -248,9 +253,275 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
             </section>
 
         </section>
+        <!-- slide 7 -->
+        <section>
+            <h3>Let's put everything together!</h3>
+            <p>
+                To test it locally, you need a machine with node, docker and a virtualization software<br/>
+                In the next slides I will use macos with node 8.9.4, docker 18.06.1-ce and virtualbox 5.2.20 (with
+                vagrant)
+            </p>
+        </section>
+        <!-- slide 8 -->
+        <section>
+            <h3>Theo server</h3>
+            <section>
+                Let's pick up some tokens for administration and client accesses
+                <pre><code class="hljs bash">$ head -1 /dev/urandom | base64 | head -3
+AWPJQZDWIG8/RgRvJQf7oBOpbt2deEVv/79+O5DTL6wEZC33HsaefORMRhx3ocDQ8X3LsA79MNIU
+vW0bhte0SDI4ZtL26m7O4+W3Z44pWfdjHnrZorOtOlvHlqBM6O/UW+dNIDK/GEy8bURlTjpjEHvG
+SooEMhppFnYZofmG2Fx438L9i7fM1keXbWQdRWGN+ipmMZ2VP+pQGywNpCIq4K6mdDHfKeLzCEcB</code></pre>
+                <small>We will use the first line as administration token and the last 2 as client tokens</small>
+            </section>
+            <section>
+                Run theo server as container
+                <pre><code class="hljs bash">$ docker run --rm -v /tmp/theo:/data \
+  --name theo-server \
+  -e DATA_PATH=/data/theo.db \
+  -e ADMIN_TOKEN="AWPJQZDWIG8/RgRvJQf7oBOpbt2deEVv/79+O5DTL6wEZC33HsaefORMRhx3ocDQ8X3LsA79MNIU" \
+  -e CLIENT_TOKENS="vW0bhte0SDI4ZtL26m7O4+W3Z44pWfdjHnrZorOtOlvHlqBM6O/UW+dNIDK/GEy8bURlTjpjEHvG,SooEMhppFnYZofmG2Fx438L9i7fM1keXbWQdRWGN+ipmMZ2VP+pQGywNpCIq4K6mdDHfKeLzCEcB" \
+  -p 9100:9100 theoapp/theo
 
 
-</div>
+> theo@0.4.0 start /usr/src/app
+> node ./build/index.js
+
+theo/0.4.0 listening at http://[::]:9100
+                </code></pre>
+            </section>
+            <section><h4 class="green">That's it!</h4></section>
+        </section>
+        <!-- slide 9 -->
+        <section>
+            <h3>Theo CLI</h3>
+            <section>
+                Let's install <span class="green">theo cli</span> using npm:
+                <pre><code class="hljs bash">$ npm i -g theoapp-cli</code></pre>
+            </section>
+            <section>
+                Let's set the environment variables:
+                <pre><code class="hljs bash  smaller">
+$ export THEO_URL=http://localhost:9100
+$ export THEO_TOKEN="AWPJQZDWIG8/RgRvJQf7oBOpbt2deEVv/79+O5DTL6wEZC33HsaefORMRhx3ocDQ8X3LsA79MNIU"
+                </code></pre>
+                <small>We can also put these variables in a file and save it as<br/>
+                    <code>~/.theo-cli/env</code><br/>or<br/>
+                    <code>/etc/theo-cli/env</code>
+                </small>
+            </section>
+            <section>
+                Let's create few of accounts
+                <pre><code class="hljs bash  smaller">
+$ theo accounts add \
+    --name "Developer 1" \
+    --email "dev1@example.com" \
+    --key "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQD4DaQVgWsexxOabTPxnDau5UsQj5eGUgXLD+28rtWMEAIzehiCcM5y0aOVZO/dBHA7NyHo/jWcw6Dew/Ty/J2WAQwXtV0xFTuA+6TpWBl35UeRJwjuuGnk0nCuvxQL9qs8+7CPis9SNlIQ38wXnsHWuWKEqnTAoO5YdRsjoGtILw== macno@habanero"
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+{
+   "id": 1,
+   "name": "Developer 1",
+   "email": "dev1@example.com",
+   "active": 1,
+   "public_keys": [
+      {
+         "id": 1,
+         "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQD4DaQVgWsexxOabTPxnDau5UsQj5eGUgXLD+28rtWMEAIzehiCcM5y0aOVZO/dBHA7NyHo/jWcw6Dew/Ty/J2WAQwXtV0xFTuA+6TpWBl35UeRJwjuuGnk0nCuvxQL9qs8+7CPis9SNlIQ38wXnsHWuWKEqnTAoO5YdRsjoGtILw== macno@habanero",
+         "created_at": 1541415146466
+      }
+   ],
+   "permissions": [],
+   "groups": []
+}
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+$ theo accounts add \
+    --name "Developer 2" \
+    --email "dev2@example.com" \
+    --key "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCtKaAI2AoNoA9gvd0THROZavXoYVa0DoIfrVmBW+FTh8/79yPyf3ZilZVEVpGYJixxneAk1S/k/KsMt68GrG1qaiGLh/pbtT3l6MkHXYqDZI7soi0plUtczXlX8GTyZKML+H/ZOzoltBmV02yUCnSvFecgMvoLzqg1ExGIb1/5AQ== macno@habanero"
+[...]
+$ theo accounts add \
+    --name "Sysop A" \
+    --email "sysop.a@example.com" \
+    --key "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDOul6NpEnQdRRlt9ALhWjcf1tDkK8VSwtK4FMsDcl8knAr3Ap7oj3/fBhLmlFl9e7AW9J2XFEf6jK+8Sv/N2+vxCMdg6APEsfSa0/gnTnv0JRRmMxBr0kKI/DfrCwGm0075uNmr6JegrLOiGtU/PfmHCgdNJiHqD7Z8301h+XNFQ== macno@habanero"
+[...]</code></pre>
+            </section>
+            <section>
+                Let's create a group:
+                <pre><code class="hljs bash smaller">
+$ theo groups add --name developers
++------------------------+
+{
+   "id": 1,
+   "name": "developers",
+   "active": 1,
+   "accounts": [],
+   "permissions": []
+}
++------------------------+
+                </code></pre>
+            </section>
+            <section>
+                Let's add accounts to <em>developers</em> group:
+                <pre><code class="hljs bash smaller">
+$ theo groups edit developers --add dev1@example.com dev2@example.com
++----------------+
+{
+   "status": 201
+}
++----------------+
+                </code></pre>
+            </section>
+            <section>
+                Let's add permission to <em>developers</em> to login as <em>node</em> on host <em>test-server</em>:
+                <pre><code class="hljs bash smaller">
+$ theo permissions add --group developers --host test-server --user node
++---------------------+
+{
+   "group_id": 1,
+   "permission_id": 1
+}
++---------------------+
+                </code></pre>
+            </section>
+            <section>
+                Let's add permission to <em>sysop.a@example.com</em> to login as <em>admin</em> on host
+                <em>test-server</em>:
+                <pre><code class="hljs bash smaller">
+$ theo permissions add --account sysop.a@example.com --host test-server --user admin
++---------------------+
+{
+   "account_id": 4,
+   "permission_id": 2
+}
++---------------------+
+                </code></pre>
+            </section>
+            <section>
+                Let's check <em>developers</em> status:
+                <pre><code class="hljs bash smaller">
+$ theo groups get developers
++-------------------------------------+
+{
+   "id": 1,
+   "name": "developers",
+   "active": 1,
+   "accounts": [
+      {
+         "id": 1,
+         "name": "Developer 1",
+         "email": "dev1@example.com",
+         "active": 1
+      },
+      {
+         "id": 3,
+         "name": "Developer 2",
+         "email": "dev2@example.com",
+         "active": 1
+      }
+   ],
+   "permissions": [
+      {
+         "id": 1,
+         "user": "node",
+         "host": "test-server",
+         "created_at": 1541415617886
+      }
+   ]
+}
++-------------------------------------+</code></pre>
+            </section>
+            <section>
+                Let's check <em>sysop.a@example.com</em> status:
+                <pre><code class="hljs bash smaller">
+$ theo accounts get sysop.a@example.com
++-------------------------------------+
+{
+   "id": 4,
+   "name": "Sysop A",
+   "email": "sysop.a@example.com",
+   "active": 1,
+   "public_keys": [
+      {
+         "id": 4,
+         "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDOul6NpEnQdRRlt9ALhWjcf1tDkK8VSwtK4FMsDcl8knAr3Ap7oj3/fBhLmlFl9e7AW9J2XFEf6jK+8Sv/N2+vxCMdg6APEsfSa0/gnTnv0JRRmMxBr0kKI/DfrCwGm0075uNmr6JegrLOiGtU/PfmHCgdNJiHqD7Z8301h+XNFQ== macno@habanero",
+         "created_at": 1541415799114
+      }
+   ],
+   "permissions": [
+      {
+         "id": 2,
+         "user": "admin",
+         "host": "test-server",
+         "created_at": 1541415823099
+      }
+   ],
+   "groups": []
+}
++-------------------------------------+</code></pre>
+            </section>
+            <section>
+                <h3 class="green">Great!</h3>
+                <p> Let's move to Theo Agent</p>
+            </section>
+        </section>
+        <section>
+            <h3>Theo Agent</h3>
+            <section>
+                Connect to the host you want to use (for example a VM running on your host), download <em>theo
+                agent</em> and make it executable:
+                <pre><code class="smaller hljs bash">root@test-server:~# curl -L -o /usr/sbin/theo-agent \
+    https://github.com/theoapp/theo-agent/releases/download/v0.2.0/theo-agent-linux-amd64
+root@test-server:~# chmod 755 /usr/sbin/theo-agent
+                </code></pre>
+            </section>
+            <section>
+                Create a Theo Agent user:
+                <pre><code class="smaller hljs bash">root@test-server:~# useradd --comment 'Theo Agent' --create-home theo-agent --shell /bin/false</code></pre>
+            </section>
+            <section>
+                Self-configure <em>Theo agent</em> and restart sshd:
+                <pre><code class="smaller hljs bash">root@test-server:~# theo-agent -install -no-interactive \
+    -sshd-config \
+    -url http://192.168.51.1:9100 \
+    -token vW0bhte0SDI4ZtL26m7O4+W3Z44pWfdjHnrZorOtOlvHlqBM6O/UW+dNIDK/GEy8bURlTjpjEHvG
+root@test-server:~# systemctl reload ssh
+                </code></pre>
+            </section>
+            <section>
+                Let's test theo-agent:
+                <pre><code class="smaller hljs bash">root@test-server:~# su theo-agent -s /bin/sh -c "theo-agent admin"
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDOul6NpEnQdRRlt9ALhWjcf1tDkK8VSwtK4FMsDcl8knAr3Ap7oj3/fBhLmlFl9e7AW9J2XFEf6jK+8Sv/N2+vxCMdg6APEsfSa0/gnTnv0JRRmMxBr0kKI/DfrCwGm0075uNmr6JegrLOiGtU/PfmHCgdNJiHqD7Z8301h+XNFQ== macno@habanero
+                </code></pre>
+            </section>
+
+            <section>
+                And now from your host... connect!
+                <pre><code class="smaller hljs bash">macno@habanero:~$ ssh admin@test-server
+admin@test-server: ~$
+                </code></pre>
+            </section>
+
+        </section>
+        <section>
+            <h3 class="green">CONGRATULATIONS!!!</h3>
+            <h5>You made it!</h5>
+        </section>
+        <section>
+            <h3>THANKS</h3>
+            <section>
+                <p class="fragment">I would like to thank <a href="https://github.com/gizero"
+                                                             target="_blank">@gizero</a> for his patience, hints and
+                    support.<br/>
+                    It's always a pleasure to work with you.
+                </p>
+            </section>
+            <section>
+                <p>Also I want to apologise to my wife and my daughters for the nights and weekends I
+                    spent working on this project...<br/>
+                    Thanks I love you <span class="red">&#10084;</span></p>
+            </section>
+        </section>
+    </section>
+</section>
 </div>
 
 <script src="lib/js/head.min.js"></script>
@@ -263,11 +534,10 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero
 
         // More info https://github.com/hakimel/reveal.js#dependencies
         dependencies: [
-            {src: 'plugin/markdown/marked.js'},
-            {src: 'plugin/markdown/markdown.js'},
             {src: 'plugin/notes/notes.js', async: true},
             {
-                src: 'plugin/highlight/highlight.js', async: true, callback: function () {
+                src: 'plugin/highlight/highlight.js', async: true,
+                callback: function () {
                     hljs.initHighlightingOnLoad();
                 }
             }
