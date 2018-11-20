@@ -45,7 +45,7 @@
     "fullname": "Michele Azzolari",
     "description": "Dad, Full Stack Developer, Avid music listener",
     "nickname": "macno",
-    "created_at": "19770411T190000+0200",
+    "created_at": "1977-04-11T18:40Z",
     "current_job": "CTO and co-founder Fluidware srl",
     "city": "Milan, Italy"
 }</code></pre>
@@ -259,7 +259,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
             <p>
                 To test it locally, you need a machine with node, docker and a virtualization software<br/>
                 In the next slides I will use macos with node 8.9.4, docker 18.06.1-ce and virtualbox 5.2.20 (with
-                vagrant)
+                vagrant 2.2.1). The VM <code>test-server</code> has been created using <a href="vagrant/Vagrantfile" target="_blank">this Vagrantfile</a>.
             </p>
         </section>
         <!-- slide 8 -->
@@ -314,34 +314,50 @@ $ export THEO_TOKEN="AWPJQZDWIG8/RgRvJQf7oBOpbt2deEVv/79+O5DTL6wEZC33HsaefORMRhx
                 <pre><code class="hljs bash  smaller">
 $ theo accounts add \
     --name "Developer 1" \
-    --email "dev1@example.com" \
-    --key "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQD4DaQVgWsexxOabTPxnDau5UsQj5eGUgXLD+28rtWMEAIzehiCcM5y0aOVZO/dBHA7NyHo/jWcw6Dew/Ty/J2WAQwXtV0xFTuA+6TpWBl35UeRJwjuuGnk0nCuvxQL9qs8+7CPis9SNlIQ38wXnsHWuWKEqnTAoO5YdRsjoGtILw== macno@habanero"
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+    --email "dev1@example.com"
++------------------------------------+
 {
    "id": 1,
    "name": "Developer 1",
    "email": "dev1@example.com",
    "active": 1,
+   "expire_at": 0,
+   "public_keys": [],
+   "groups": [
+      {
+         "id": 1,
+         "name": "dev1@example.com",
+         "active": 1
+      }
+   ],
+   "permissions": []
+}
++------------------------------------+
+$ theo keys add dev1@example.com \
+                    --key "$(cat ~/.ssh/id_rsa.pub)"
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+{
+   "account_id": 1,
    "public_keys": [
       {
          "id": 1,
-         "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQD4DaQVgWsexxOabTPxnDau5UsQj5eGUgXLD+28rtWMEAIzehiCcM5y0aOVZO/dBHA7NyHo/jWcw6Dew/Ty/J2WAQwXtV0xFTuA+6TpWBl35UeRJwjuuGnk0nCuvxQL9qs8+7CPis9SNlIQ38wXnsHWuWKEqnTAoO5YdRsjoGtILw== macno@habanero",
-         "created_at": 1541415146466
+         "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQD4DaQVgWsexxOabTPxnDau5UsQj5eGUgXLD+28rtWMEAIzehiCcM5y0aOVZO/dBHA7NyHo/jWcw6Dew/Ty/J2WAQwXtV0xFTuA+6TpWBl35UeRJwjuuGnk0nCuvxQL9qs8+7CPis9SNlIQ38wXnsHWuWKEqnTAoO5YdRsjoGtILw== macno@habanero"
       }
-   ],
-   "permissions": [],
-   "groups": []
+   ]
 }
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 $ theo accounts add \
     --name "Developer 2" \
-    --email "dev2@example.com" \
-    --key "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCtKaAI2AoNoA9gvd0THROZavXoYVa0DoIfrVmBW+FTh8/79yPyf3ZilZVEVpGYJixxneAk1S/k/KsMt68GrG1qaiGLh/pbtT3l6MkHXYqDZI7soi0plUtczXlX8GTyZKML+H/ZOzoltBmV02yUCnSvFecgMvoLzqg1ExGIb1/5AQ== macno@habanero"
+    --email "dev2@example.com"
 [...]
+$ theo keys add dev2@example.com \
+    --key "$(cat ~/.ssh/id_rsa.pub)"
 $ theo accounts add \
     --name "Sysop A" \
-    --email "sysop.a@example.com" \
-    --key "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDOul6NpEnQdRRlt9ALhWjcf1tDkK8VSwtK4FMsDcl8knAr3Ap7oj3/fBhLmlFl9e7AW9J2XFEf6jK+8Sv/N2+vxCMdg6APEsfSa0/gnTnv0JRRmMxBr0kKI/DfrCwGm0075uNmr6JegrLOiGtU/PfmHCgdNJiHqD7Z8301h+XNFQ== macno@habanero"
+    --email "sysop.a@example.com"
+[...]
+$ theo keys add sysop.a@example.com \
+    --key "$(cat ~/.ssh/id_rsa.pub)"
 [...]</code></pre>
             </section>
             <section>
@@ -350,7 +366,7 @@ $ theo accounts add \
 $ theo groups add --name developers
 +------------------------+
 {
-   "id": 1,
+   "id": 4,
    "name": "developers",
    "active": 1,
    "accounts": [],
@@ -376,7 +392,7 @@ $ theo groups edit developers --add dev1@example.com dev2@example.com
 $ theo permissions add --group developers --host test-server --user node
 +---------------------+
 {
-   "group_id": 1,
+   "group_id": 4,
    "permission_id": 1
 }
 +---------------------+
@@ -389,7 +405,7 @@ $ theo permissions add --group developers --host test-server --user node
 $ theo permissions add --account sysop.a@example.com --host test-server --user admin
 +---------------------+
 {
-   "account_id": 4,
+   "account_id": 3,
    "permission_id": 2
 }
 +---------------------+
@@ -401,7 +417,7 @@ $ theo permissions add --account sysop.a@example.com --host test-server --user a
 $ theo groups get developers
 +-------------------------------------+
 {
-   "id": 1,
+   "id": 4,
    "name": "developers",
    "active": 1,
    "accounts": [
@@ -412,7 +428,7 @@ $ theo groups get developers
          "active": 1
       },
       {
-         "id": 3,
+         "id": 2,
          "name": "Developer 2",
          "email": "dev2@example.com",
          "active": 1
@@ -423,7 +439,7 @@ $ theo groups get developers
          "id": 1,
          "user": "node",
          "host": "test-server",
-         "created_at": 1541415617886
+         "created_at": 1542702951350
       }
    ]
 }
@@ -433,17 +449,26 @@ $ theo groups get developers
                 Let's check <em>sysop.a@example.com</em> status:
                 <pre><code class="hljs bash smaller">
 $ theo accounts get sysop.a@example.com
-+-------------------------------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 {
-   "id": 4,
+   "id": 3,
    "name": "Sysop A",
    "email": "sysop.a@example.com",
    "active": 1,
+   "expire_at": 0,
    "public_keys": [
       {
-         "id": 4,
-         "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDOul6NpEnQdRRlt9ALhWjcf1tDkK8VSwtK4FMsDcl8knAr3Ap7oj3/fBhLmlFl9e7AW9J2XFEf6jK+8Sv/N2+vxCMdg6APEsfSa0/gnTnv0JRRmMxBr0kKI/DfrCwGm0075uNmr6JegrLOiGtU/PfmHCgdNJiHqD7Z8301h+XNFQ== macno@habanero",
-         "created_at": 1541415799114
+         "id": 3,
+         "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCtKaAI2AoNoA9gvd0THROZavXoYVa0DoIfrVmBW+FTh8/79yPyf3ZilZVEVpGYJixxneAk1S/k/KsMt68GrG1qaiGLh/pbtT3l6MkHXYqDZI7soi0plUtczXlX8GTyZKML+H/ZOzoltBmV02yUCnSvFecgMvoLzqg1ExGIb1/5AQ== macno@habanero",
+         "public_key_sig": null,
+         "created_at": 1542702914738
+      }
+   ],
+   "groups": [
+      {
+         "id": 3,
+         "name": "sysop.a@example.com",
+         "active": 1
       }
    ],
    "permissions": [
@@ -451,12 +476,11 @@ $ theo accounts get sysop.a@example.com
          "id": 2,
          "user": "admin",
          "host": "test-server",
-         "created_at": 1541415823099
+         "created_at": 1542702964294
       }
-   ],
-   "groups": []
+   ]
 }
-+-------------------------------------+</code></pre>
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</code></pre>
             </section>
             <section>
                 <h3 class="green">Great!</h3>
@@ -468,27 +492,28 @@ $ theo accounts get sysop.a@example.com
             <section>
                 Connect to the host you want to use (for example a VM running on your host), download <em>theo
                 agent</em> and make it executable:
-                <pre><code class="smaller hljs bash">root@test-server:~# curl -L -o /usr/sbin/theo-agent \
-    https://github.com/theoapp/theo-agent/releases/download/v0.2.0/theo-agent-linux-amd64
-root@test-server:~# chmod 755 /usr/sbin/theo-agent
+                <pre><code class="smaller hljs bash">vagrant@test-server:~$ sudo curl -L -o /usr/sbin/theo-agent \
+    https://github.com/theoapp/theo-agent/releases/download/v0.5.1/theo-agent-linux-amd64
+vagrant@test-server:~$ sudo chmod 755 /usr/sbin/theo-agent
                 </code></pre>
             </section>
             <section>
                 Create a Theo Agent user:
-                <pre><code class="smaller hljs bash">root@test-server:~# useradd --comment 'Theo Agent' --create-home theo-agent --shell /bin/false</code></pre>
+                <pre><code class="smaller hljs bash">vagrant@test-server:~$ sudo useradd --comment 'Theo Agent' \
+                    --create-home theo-agent --shell /bin/false</code></pre>
             </section>
             <section>
                 Self-configure <em>Theo agent</em> and restart sshd:
-                <pre><code class="smaller hljs bash">root@test-server:~# theo-agent -install -no-interactive \
+                <pre><code class="smaller hljs bash">vagrant@test-server:~$ sudo theo-agent -install -no-interactive \
     -sshd-config \
-    -url http://192.168.51.1:9100 \
+    -url http://192.168.56.1:9100 \
     -token vW0bhte0SDI4ZtL26m7O4+W3Z44pWfdjHnrZorOtOlvHlqBM6O/UW+dNIDK/GEy8bURlTjpjEHvG
-root@test-server:~# systemctl reload ssh
+vagrant@test-server:~$ sudo systemctl reload ssh
                 </code></pre>
             </section>
             <section>
                 Let's test theo-agent:
-                <pre><code class="smaller hljs bash">root@test-server:~# su theo-agent -s /bin/sh -c "theo-agent admin"
+                <pre><code class="smaller hljs bash">vagrant@test-server:~$ sudo su theo-agent -s /bin/sh -c "/usr/sbin/theo-agent admin"
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDOul6NpEnQdRRlt9ALhWjcf1tDkK8VSwtK4FMsDcl8knAr3Ap7oj3/fBhLmlFl9e7AW9J2XFEf6jK+8Sv/N2+vxCMdg6APEsfSa0/gnTnv0JRRmMxBr0kKI/DfrCwGm0075uNmr6JegrLOiGtU/PfmHCgdNJiHqD7Z8301h+XNFQ== macno@habanero
                 </code></pre>
             </section>
