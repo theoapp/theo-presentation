@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+  tasks:
+  - name: Add the user 'node'
+    user:
+      name: node
+      comment: Node user
+      shell: /bin/bash
+  - name: Add the user 'admin'
+    user:
+      name: admin
+      comment: Admin user
+      shell: /bin/bash
+  - name: install curl
+    package:
+      name: curl
+      state: present
