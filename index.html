@@ -14,23 +14,25 @@
 
     <!-- Printing and PDF exports -->
     <script>
-        var link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
-        document.getElementsByTagName('head')[0].appendChild(link);
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName('head')[0].appendChild(link);
     </script>
 
     <!-- custom css -->
     <link rel="stylesheet" href="css/theo.css">
-
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
 </head>
 <body>
+<div class="theo-fish"><img class="plain" src="assets/favicon.png" alt="Theo The Fish"/></div>
 <section class="reveal">
     <section class="slides">
+
         <!-- slide 0 -->
         <section>
-            <img src="assets/theo-logo.png" alt="Theo Logo" style="max-width: 200px" />
+            <img class="logo plain" src="assets/theo-logo.png" alt="Theo Logo" style="max-width: 400px"/>
             <h4>The Authorized_Keys Manager</h4>
             <a href="https://github.com/theoapp" target="_blank">@TheoApp</a>
             <hr/>
@@ -208,7 +210,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
             <!-- slide 6.2 -->
             <section>
                 <h3>Theo Server</h3>
-                Exposes a REST APIs for administration
+                Exposes few REST APIs for administration
                 <ul>
                     <li class="fragment">Accounts</li>
                     <li class="fragment">Groups</li>
@@ -238,7 +240,10 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
             </section>
             <!-- slide 6.5 -->
             <section>
-                We wrote an agent, but it can be replaced by a shell script that curls theo-server
+                We wrote an agent, but it can be replaced by a shell script that curls theo-server <sup>1</sup>
+                <div class="fragment" style="margin-top: 100px">
+                    <small><strong>1</strong> Not so simple if you want to verify signatures</small>
+                </div>
             </section>
 
             <!-- slide 6.6 -->
@@ -260,21 +265,23 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
             <section>
                 <h3>What is Authorized Keys Signing?</h3>
                 <p class="fragment">
-                To avoid unauthorized keys to be returned to SSHD, Theo CLI and Theo Agent both support
-                a way to sign (Theo CLI) and to verify (Theo Agent) each key.
+                    To avoid unauthorized keys to be returned to SSHD, Theo CLI and Theo Agent both support
+                    a way to sign (Theo CLI) and to verify (Theo Agent) each key.
                 </p>
             </section>
 
             <section>
                 <h3>Theo CLI</h3>
                 <p>
-                    Using a private key, when it sends a public key to Theo Server, it attaches also a digital signature of the key.
+                    Using a private key, when it sends a public key to Theo Server, it attaches also a digital signature
+                    of the key.
                 </p>
             </section>
             <section>
                 <h3>Theo Agent</h3>
                 <p>
-                    Using the corresponding public key of the certificate used by Theo CLI, it verifies each public key retrieved with its signature.
+                    Using the corresponding public key of the certificate used by Theo CLI, it verifies each public key
+                    retrieved with its signature.
                 </p>
             </section>
         </section>
@@ -284,7 +291,9 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
             <p>
                 To test it locally, you need a machine with node, docker and a virtualization software<br/>
                 In the next slides I will use macos with node 8.9.4, docker 18.06.1-ce and virtualbox 5.2.20 (with
-                vagrant 2.2.1). The VM <code>test-server</code> has been created using <a href="vagrant/Vagrantfile" target="_blank">this Vagrantfile</a>.
+                vagrant 2.2.1). The VM <code>test-server</code> has been created using <a href="vagrant/Vagrantfile"
+                                                                                          target="_blank">this
+                Vagrantfile</a>.
             </p>
         </section>
         <!-- slide 8 -->
@@ -565,7 +574,7 @@ admin@test-server: ~$
                 </p>
             </section>
             <section>
-                <p class="fragment">To Tommaso for his beautiful artwork on Theo's logos
+                <p>To Tommaso for his beautiful artwork on Theo's logos
                 </p>
             </section>
             <section>
@@ -582,21 +591,21 @@ admin@test-server: ~$
 <script src="js/reveal.js"></script>
 
 <script>
-    // More info https://github.com/hakimel/reveal.js#configuration
-    Reveal.initialize({
-        history: true,
+  // More info https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    history: true,
 
-        // More info https://github.com/hakimel/reveal.js#dependencies
-        dependencies: [
-            {src: 'plugin/notes/notes.js', async: true},
-            {
-                src: 'plugin/highlight/highlight.js', async: true,
-                callback: function () {
-                    hljs.initHighlightingOnLoad();
-                }
-            }
-        ]
-    });
+    // More info https://github.com/hakimel/reveal.js#dependencies
+    dependencies: [
+      {src: 'plugin/notes/notes.js', async: true},
+      {
+        src: 'plugin/highlight/highlight.js', async: true,
+        callback: function () {
+          hljs.initHighlightingOnLoad();
+        }
+      }
+    ]
+  });
 </script>
 </body>
 </html>

@@ -38,3 +38,13 @@ img.laptop {
 .smaller {
     font-size: 70% !important;
 }
+
+.theo-fish img,
+img.logo {
+    background: inherit !important;
+}
+.theo-fish {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+}
