@@ -226,13 +226,13 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
                     <li class="fragment">Authorized_keys</li>
                     <li class="fragment">Permissions</li>
                 </ul>
-                <p class="fragment green">Consumed by theo CLI</p>
+                <p class="fragment green">Consumed by Theo CLI</p>
             </section>
             <!-- slide 6.3 -->
             <section>
                 <h3>Theo Server</h3>
                 Exposes an endpoint for fetching authorized_keys
-                <p class="fragment green">Consumed by theo agent</p>
+                <p class="fragment green">Consumed by Theo agent</p>
             </section>
 
             <!-- slide 6.4 -->
@@ -240,7 +240,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
                 <h3>Theo Agent</h3>
                 <ul>
                     <li class="fragment">Written in go</li>
-                    <li class="fragment">Keeps a per-user local copy of authorized_keys in the event that theo server is
+                    <li class="fragment">Keeps a per-user local copy of authorized_keys in the event that Theo server is
                         unreachable
                     </li>
                     <li class="fragment">Can verify authorized keys signatures (and discard them if not valid)</li>
@@ -249,7 +249,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
             </section>
             <!-- slide 6.5 -->
             <section>
-                We wrote an agent, but it can be replaced by a shell script that curls theo server <sup>1</sup>
+                We wrote an agent, but it can be replaced by a shell script that curls Theo server <sup>1</sup>
                 <div class="fragment" style="margin-top: 100px">
                     <small><strong>1</strong> Sigthly harder when signature verification is needed</small>
                 </div>
@@ -317,7 +317,7 @@ SooEMhppFnYZofmG2Fx438L9i7fM1keXbWQdRWGN+ipmMZ2VP+pQGywNpCIq4K6mdDHfKeLzCEcB</co
                 <small>We will use the first string as administration token and the last two as client tokens</small>
             </section>
             <section>
-                Run theo server as container
+                Run Theo server as container
                 <pre><code class="hljs bash">$ docker run --rm -v /tmp/theo:/data \
   --name theo-server \
   -e DATA_PATH=/data/theo.db \
@@ -338,7 +338,7 @@ theo/0.12.0 listening at http://[::]:9100
         <section>
             <h3>Theo CLI</h3>
             <section>
-                Let's install <span class="green">theo cli</span> using npm:
+                Let's install <span class="green">Theo cli</span> using npm:
                 <pre><code class="hljs bash">$ npm i -g theoapp-cli</code></pre>
             </section>
             <section>
@@ -533,7 +533,7 @@ $ theo accounts get sysop.a@example.com
         <section>
             <h3>Theo Agent</h3>
             <section>
-                Connect to the host you want to use (for example a VM running on your host), download <em>theo
+                Connect to the host you want to use (for example a VM running on your host), download <em>Theo
                 agent</em> and make it executable:
                 <pre><code class="smaller hljs bash">vagrant@test-server:~$ sudo curl -L -o /usr/sbin/theo-agent \
     https://github.com/theoapp/theo-agent/releases/download/v0.5.2/theo-agent-linux-amd64
@@ -555,7 +555,7 @@ vagrant@test-server:~$ sudo systemctl reload ssh
                 </code></pre>
             </section>
             <section>
-                Let's give theo agent a test:
+                Let's give Theo agent a test:
                 <pre><code class="smaller hljs bash">vagrant@test-server:~$ sudo su theo-agent -s /bin/sh -c "/usr/sbin/theo-agent admin"
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDOul6NpEnQdRRlt9ALhWjcf1tDkK8VSwtK4FMsDcl8knAr3Ap7oj3/fBhLmlFl9e7AW9J2XFEf6jK+8Sv/N2+vxCMdg6APEsfSa0/gnTnv0JRRmMxBr0kKI/DfrCwGm0075uNmr6JegrLOiGtU/PfmHCgdNJiHqD7Z8301h+XNFQ== macno@habanero
                 </code></pre>
