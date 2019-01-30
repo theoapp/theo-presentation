@@ -175,7 +175,7 @@
             </section>
             <section>
                 <img src="assets/server.svg" class="server"/><br/>
-                Host fetches authorized_keys from external server passing its hostname and the user:
+                Host fetches authorized_keys from external server by passing its hostname and the user:
                 <pre>GET /authorized_keys/server1/a.user</pre>
             </section>
             <section>
@@ -196,7 +196,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
         <section>
             <section>
                 <h3>Theo</h3>
-                <p>Based on 3 components</p>
+                <p>Involves 3 components</p>
                 <ul>
                     <li class="fragment">Theo server</li>
                     <li class="fragment">Theo agent</li>
@@ -211,15 +211,15 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
                     <li class="fragment">Uses sqlite3 or MariaDB to store data</li>
                     <li class="fragment">Available as docker image <a href="https://hub.docker.com/r/theoapp/theo/"
                                                                       target="_blank">theoapp/theo</a></li>
-                    <li class="fragment">Supports memcached and redis to cache authorized_keys
-                        per host/user
+                    <li class="fragment">Supports caching per-user/host authorized_keys
+                        with memcached or redis
                     </li>
                 </ul>
             </section>
             <!-- slide 6.2 -->
             <section>
                 <h3>Theo Server</h3>
-                Exposes few REST APIs for administration
+                Exposes several REST APIs for manipulating:
                 <ul>
                     <li class="fragment">Accounts</li>
                     <li class="fragment">Groups</li>
@@ -231,7 +231,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
             <!-- slide 6.3 -->
             <section>
                 <h3>Theo Server</h3>
-                Exposes an endpoint to fetch authorized_keys
+                Exposes an endpoint for fetching authorized_keys
                 <p class="fragment green">Consumed by theo agent</p>
             </section>
 
@@ -240,18 +240,18 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
                 <h3>Theo Agent</h3>
                 <ul>
                     <li class="fragment">Written in go</li>
-                    <li class="fragment">Keeps a per-user local copy of authorized_keys in the case that theo-server is
+                    <li class="fragment">Keeps a per-user local copy of authorized_keys in the event that theo-server is
                         unreachable
                     </li>
-                    <li class="fragment">Could verify authorized keys signatures (and discard them if not valid)</li>
-                    <li class="fragment">Self-install feature</li>
+                    <li class="fragment">Can verify authorized keys signatures (and discard them if not valid)</li>
+                    <li class="fragment">Easy-to-use self-install feature</li>
                 </ul>
             </section>
             <!-- slide 6.5 -->
             <section>
                 We wrote an agent, but it can be replaced by a shell script that curls theo-server <sup>1</sup>
                 <div class="fragment" style="margin-top: 100px">
-                    <small><strong>1</strong> Not so simple if you want to verify signatures</small>
+                    <small><strong>1</strong> Sigthly harder when signature verification is needed</small>
                 </div>
             </section>
 
@@ -289,8 +289,8 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
             <section>
                 <h3>Theo Agent</h3>
                 <p>
-                    Using the corresponding public key of the certificate used by Theo CLI, it verifies each public key
-                    retrieved with its signature.
+                  Using the corresponding public key of the certificate used by Theo CLI, it verifies each retrieved
+                  public key with its signature.
                 </p>
             </section>
         </section>
@@ -309,12 +309,12 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQ[....]347PRq7LplS03D7xUw== macno@habanero<
         <section>
             <h3>Theo server</h3>
             <section>
-                Let's pick up some tokens for administration and client accesses
+                Let's generate some tokens for administration and client authentication
                 <pre><code class="hljs bash">$ head -1 /dev/urandom | base64 | head -3
 AWPJQZDWIG8/RgRvJQf7oBOpbt2deEVv/79+O5DTL6wEZC33HsaefORMRhx3ocDQ8X3LsA79MNIU
 vW0bhte0SDI4ZtL26m7O4+W3Z44pWfdjHnrZorOtOlvHlqBM6O/UW+dNIDK/GEy8bURlTjpjEHvG
 SooEMhppFnYZofmG2Fx438L9i7fM1keXbWQdRWGN+ipmMZ2VP+pQGywNpCIq4K6mdDHfKeLzCEcB</code></pre>
-                <small>We will use the first line as administration token and the last 2 as client tokens</small>
+                <small>We will use the first string as administration token and the last two as client tokens</small>
             </section>
             <section>
                 Run theo server as container
@@ -419,7 +419,7 @@ $ theo groups add --name developers
                 </code></pre>
             </section>
             <section>
-                Let's add accounts to <em>developers</em> group:
+                Let's add accounts to the group <em>developers</em>:
                 <pre><code class="hljs bash smaller">
 $ theo groups edit developers --add dev1@example.com dev2@example.com
 +----------------+
@@ -574,7 +574,7 @@ admin@test-server: ~$
             <h5>You made it!</h5>
         </section>
         <section>
-            <h3>THANKS</h3>
+            <h3>Acknolegments</h3>
             <section>
                 <p class="fragment">I would like to thank <a href="https://github.com/gizero"
                                                              target="_blank">@gizero</a> for his patience, hints and
