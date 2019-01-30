@@ -43,8 +43,12 @@ img.laptop {
 img.logo {
     background: inherit !important;
 }
+.theo-fish img {
+    max-width: 100%;
+}
 .theo-fish {
     position: fixed;
     top: 20px;
     left: 20px;
+    width: 200px;
 }
